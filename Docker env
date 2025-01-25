@@ -1,4 +1,4 @@
-#Microbiome Analysis using Qiime2 in the Docker environment
+# Microbiome Analysis using Qiime2 in the Docker environment
 
 #How to install Docker and Install required packages
 >sudo apt install ca-certificates curl gnupg lsb-release
