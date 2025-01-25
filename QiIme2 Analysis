@@ -1,0 +1,106 @@
+#Qiime2 analysis 
+
+>cd /home/akshay/major_project/sequences
+>sudo systemctl start docker
+>sudo docker run -t -i -v $(pwd):/data quay.io/qiime2/core:2023.5 /bin/bash 
+>sudo docker run -t -i -v /home/akshay/major_project/:/data quay.io/qiime2/core:2023.5 /bin/bash
+>mount | grep /data
+> ls /data
+> cd /data
+> qiime –help
+
+#Import your sequences
+>qiime tools import \
+  --type 'SampleData[PairedEndSequencesWithQuality]' \
+  --input-path /data/sequences/manifest.tsv \
+  --output-path paired-end-demux.qza \
+  --input-format PairedEndFastqManifestPhred33V2
+
+#Demultiplex and visualize
+>qiime demux summarize \
+  --i-data paired-end-demux.qza \
+  --o-visualization demux-summary.qzv
+
+
+>qiime dada2 denoise-paired \
+  --i-demultiplexed-seqs paired-end-demux.qza \
+  --p-trunc-len-f 220 \
+  --p-trunc-len-r 200 \
+  --p-max-ee-f 2 \
+  --p-max-ee-r 2 \
+  --p-trunc-q 2 \
+  --p-n-threads 4 \
+  --o-table 16S-table.qza \
+  --o-representative-sequences 16S-rep-seqs.qza \
+  --o-denoising-stats 16S-denoising-stats.qza \
+  --verbose
+
+#Phylogenetic Analysis:
+>qiime phylogeny align-to-tree-mafft-fasttree \
+  --i-sequences rep-seqs.qza \
+  --o-alignment aligned-rep-seqs.qza \
+  --o-tree unrooted-tree.qza \
+  --o-rooted-tree rooted-tree.qza
+
+#Steps for Assigning Taxonomy in QIIME 2:
+Import a Pre-Trained Classifier
+>wget https://data.qiime2.org/2023.5/common/silva-138-99-515-806-nb-classifier.qza
+
+#Assign Taxonomy Using the Classifier
+>qiime feature-classifier classify-sklearn \
+  --i-classifier gg-13-8-99-515-806-nb-classifier.qza \
+  --i-reads rep-seqs.qza \
+  --o-classification taxonomy.qza
+
+#Visualize the Taxonomy:
+>qiime metadata tabulate \
+  --m-input-file taxonomy.qza \
+  --o-visualization taxonomy.qzv
+
+#Create a Taxa Barplot:
+>qiime taxa barplot \
+  --i-table table.qza \
+  --i-taxonomy taxonomy.qza \
+  --m-metadata-file sample-metadata.tsv \
+  --o-visualization taxa-bar-plots.qzv
+
+#sampling depth : 
+>qiime feature-table summarize \
+  --i-table table.qza \
+  --o-visualization table-summary.qzv \
+  --m-sample-metadata-file metadata.tsv
+
+#Alpha Diversity Analysis
+>qiime diversity alpha \
+  --i-table table.qza \
+  --p-metric shannon \
+  --o-alpha-diversity shannon_vector.qza
+        Visualize Alpha Diversity:qiime diversity alpha-group-significance \
+  --i-alpha-diversity shannon_vector.qza \
+  --m-metadata-file metadata.tsv \
+  --o-visualization shannon_group_significance.qzv
+         
+#View the Visualization:
+> qiime tools view shannon_group_significance.qzv
+
+#Beta Diversity Analysis
+>qiime diversity beta \
+  --i-table table.qza \
+  --p-metric braycurtis \
+  --o-distance-matrix bray_curtis_distance_matrix.qza
+
+#Visualize Beta Diversity: 
+>qiime diversity pcoa \
+  --i-distance-matrix bray_curtis_distance_matrix.qza \
+  --o-pcoa pcoa_results.qza
+       
+#Visualize PCoA Results: 
+>qiime emperor plot \
+  --i-pcoa pcoa_results.qza \
+  --m-metadata-file metadata.tsv \
+  --o-visualization pcoa_plot.qzv
+        
+View the Visualization:
+   qiime tools view pcoa_plot.qzv 
+
+
