@@ -1,2 +1,4 @@
 # Metagenomics-
-NGS Enablled Metageomics Insights into Banana Rhizosphere 
+NGS-Enabled Metageomics Insights into Banana Rhizosphere 
+
+This project investigates the microbial diversity and functional roles in the banana rhizosphere using next-generation sequencing (NGS) data. The analysis pipeline involves preprocessing and diversity analysis with QIIME 2, followed by the identification of pathogenic bacteria and key microbial features using clustering algorithms like K-means, PCA, T-SNE, and UMAP. Functional annotation and pathway analysis are performed in R to explore microbial interactions and their potential impact on plant health. The project aims to identify microbial species associated with beneficial or harmful outcomes in the banana rhizosphere and understand their functional contributions.
