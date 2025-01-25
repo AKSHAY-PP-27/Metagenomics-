@@ -1,5 +1,0 @@
-#Microbiome Analysis using Qiime2 in the Docker environment
-
-install Docker:
-sudo apt update 
-sudo apt upgrade 
