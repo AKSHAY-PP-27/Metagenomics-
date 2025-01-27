@@ -11,4 +11,5 @@ Experiment Type: Microbial diversity profiling and functional analysis using nex
 
 Analysis Plots
 1. Demultiplexed sequence counts summary
+https://github.com/AKSHAY-PP-27/Metagenomics-/blob/main/Demultiplxed%20sequence%20counts%20summary.png
 
